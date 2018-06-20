@@ -148,10 +148,10 @@
         
         var scene = createScene()
         allphi = new BABYLON.SceneLoader.ImportMesh("", "", "skull.babylon", scene, function (newMeshes) {
-            allphi.rotation.y += 0.5;      
+            allphi.rotation.y += 0.5; allphi.rotation.x += 20;      
         });
        
- 	skull= new BABYLON.SceneLoader.ImportMesh("", "", "AllPhi_Logo.babylon", scene, function (newMeshes) {
+ 	    skull= new BABYLON.SceneLoader.ImportMesh("", "", "AllPhi_Logo.babylon", scene, function (newMeshes) {
             
         });
 

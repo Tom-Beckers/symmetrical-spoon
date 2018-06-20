@@ -42,37 +42,6 @@
         var canvas = document.getElementById("renderCanvas");
         var engine = new BABYLON.Engine(canvas, true);
 
-        thanosFX = 
-        `varying vec2 vUV;
-        uniform sampler2D textureSampler;
-        uniform vec2 screenSize;
-        
-        uniform sampler2D noiseRef0;
-        uniform sampler2D noiseRef1;
-        
-        uniform float time; 
-        
-        
-        void main(void){ 
-        
-            vec2 unit = vUV/screenSize;
-            unit*=16.0+(sin(time*0.5)*50.0);
-            vec2 pos = vUV;
-            pos.x += sin(time*0.35);
-            pos.y -= time*0.2;
-            vec2 r = ((texture2D(noiseRef0, pos).rb)*2.0-1.0)*unit;
-        
-        
-            vec3 c = texture2D(textureSampler, vUV+r).rgb;
-        
-        
-        
-           gl_FragColor = vec4(c, 1.0);
-        }
-        `;
-        
-         BABYLON.Effect.ShadersStore['thanosEffectFragmentShader'] = thanosFX;
-        
         var createScene = function () {
             var scene = new BABYLON.Scene(engine);
         
@@ -80,38 +49,18 @@
             var light = new BABYLON.PointLight("Omni", new BABYLON.Vector3(20, 20, 100), scene);
         
             //Adding an Arc Rotate Camera
-            var camera = new BABYLON.ArcRotateCamera("Camera", 0, 0.8, 100, BABYLON.Vector3.Zero(), scene);
+            var camera = new BABYLON.ArcRotateCamera("Camera", 30, 0,120, BABYLON.Vector3.Zero(), scene);
             camera.attachControl(canvas, false);
         
             // The first parameter can be used to specify which mesh to import. Here we import all meshes
-            BABYLON.SceneLoader.ImportMesh("", "", "AllPhi_Logo.babylon", scene, function (newMeshes) {
-                // Set the target of the camera to the first imported mesh
-               
-                    
-               
-                camera.target = newMeshes[0];
+            BABYLON.SceneLoader.ImportMesh("", "scenes/", "AllPhi_Logo.babylon", scene, function (newMeshes) {
+                              
             });
         
-            var time = 0;
-            var rate = 0.01;
             // Move the light with the camera
             scene.registerBeforeRender(function () {
                 light.position = camera.position;
-                 time+=scene.getAnimationRatio()*rate;
             });
-        
-            var postEffect = new BABYLON.PostProcess("thanosEffect", "thanosEffect", ["time", "screenSize"], ["noiseRef0", "noiseRef1"], 1, camera);
-               
-            var noiseTexture0 = new BABYLON.Texture('grass.png', scene);
-            var noiseTexture1 = new BABYLON.Texture('ground.jpg', scene);
-        
-            postEffect.onApply = function (effect) {
-                effect.setVector2("screenSize", new BABYLON.Vector2(postEffect.width, postEffect.height));
-                effect.setFloat('time', time); //this is the problematic line
-                effect.setTexture('noiseRef0', noiseTexture0);
-                effect.setTexture('noiseRef1', noiseTexture1);
-            };   
-        
         
             return scene;
         }
@@ -121,7 +70,6 @@
         engine.runRenderLoop(function () {
             if (scene) {
                 scene.render();
-               
             }
         });
 
